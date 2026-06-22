@@ -45,7 +45,7 @@ bun run db:migrate
 bun run dev
 ```
 
-Server runs at **http://localhost:3001**
+Server runs at **[http://localhost:3001](http://localhost:3001)**
 
 ### 3. Frontend
 
@@ -56,20 +56,22 @@ bun install
 bun run dev
 ```
 
-Client runs at **http://localhost:5173**
+Client runs at **[http://localhost:5173](http://localhost:5173)**
 
-Open **http://localhost:5173** and use the chat widget in the bottom-right corner.
+Open **[http://localhost:5173](http://localhost:5173)** and use the chat widget in the bottom-right corner.
 
 ## Environment Variables
 
 ### Server (`server/.env`)
 
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | PostgreSQL connection string |
+
+| Variable             | Description                                                              |
+| -------------------- | ------------------------------------------------------------------------ |
+| `DATABASE_URL`       | PostgreSQL connection string                                             |
 | `OPENROUTER_API_KEY` | OpenRouter API key from [openrouter.ai/keys](https://openrouter.ai/keys) |
-| `OPENROUTER_MODEL` | Model slug (default: `openrouter/free`) |
-| `PORT` | Server port (default: 3001) |
+| `OPENROUTER_MODEL`   | Model slug (default: `openrouter/free`)                                  |
+| `PORT`               | Server port (default: 3001)                                              |
+
 
 Example:
 
@@ -82,9 +84,11 @@ PORT=3001
 
 ### Client (`client/.env`)
 
-| Variable | Description |
-|----------|-------------|
+
+| Variable       | Description                                    |
+| -------------- | ---------------------------------------------- |
 | `VITE_API_URL` | Backend URL (default: `http://localhost:3001`) |
+
 
 ## Database Setup
 
@@ -132,23 +136,27 @@ Response:
 
 ### Backend (feature-modular)
 
-| Module | Responsibility |
-|--------|----------------|
-| `features/chat/` | `POST /chat/message` — validate, persist, call LLM, respond |
-| `features/conversation/` | `GET /conversation/:id` — load chat history |
-| `features/llm/` | `generateReply()` — OpenRouter + static store FAQ |
-| `db/` | Drizzle schema + Postgres client |
-| `middleware/` | Global error handler + CORS |
+
+| Module                   | Responsibility                                              |
+| ------------------------ | ----------------------------------------------------------- |
+| `features/chat/`         | `POST /chat/message` — validate, persist, call LLM, respond |
+| `features/conversation/` | `GET /conversation/:id` — load chat history                 |
+| `features/llm/`          | `generateReply()` — OpenRouter + static store FAQ           |
+| `db/`                    | Drizzle schema + Postgres client                            |
+| `middleware/`            | Global error handler + CORS                                 |
+
 
 Each feature has: `*.routes.ts` (HTTP), `*.service.ts` (logic), `*.repository.ts` (DB queries).
 
 ### Frontend
 
-| File | Role |
-|------|------|
-| `features/chat/ChatWidget.tsx` | shadcn/ui chat panel |
-| `features/chat/useChat.ts` | State, session restore via `localStorage` |
-| `features/chat/chatApi.ts` | API calls |
+
+| File                           | Role                                      |
+| ------------------------------ | ----------------------------------------- |
+| `features/chat/ChatWidget.tsx` | shadcn/ui chat panel                      |
+| `features/chat/useChat.ts`     | State, session restore via `localStorage` |
+| `features/chat/chatApi.ts`     | API calls                                 |
+
 
 ### Request flow
 
@@ -202,29 +210,5 @@ Then refresh the page. The server strips these patterns from new replies, but ol
 
 `openrouter/free` can take 10–30+ seconds depending on which model is selected. This is normal for free-tier routing.
 
-## Deployment
 
-### Backend (Render)
 
-- Root directory: `server`
-- Build: `bun install && bun run db:migrate`
-- Start: `bun run start`
-- Env: `DATABASE_URL`, `OPENROUTER_API_KEY`, `OPENROUTER_MODEL`, `PORT`
-
-### Frontend (Vercel / Netlify)
-
-- Root directory: `client`
-- Build: `bun run build`
-- Env: `VITE_API_URL` → your Render backend URL
-
-Enable CORS on the backend for your frontend origin (already configured for dev).
-
-## Evaluation Checklist
-
-- [x] Chat UI with user/AI messages, send on Enter, auto-scroll, loading state
-- [x] `POST /chat/message` returns `{ reply, sessionId }`
-- [x] Messages persisted in PostgreSQL
-- [x] History reload via `GET /conversation/:sessionId` + `localStorage`
-- [x] OpenRouter LLM with store FAQ knowledge
-- [x] Input validation, long-message truncation, graceful LLM errors
-- [x] No secrets committed (`.env.example` only)
